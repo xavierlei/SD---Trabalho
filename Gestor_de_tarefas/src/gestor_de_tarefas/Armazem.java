@@ -18,18 +18,21 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Armazem implements InterfaceArmazem {
     private Map<String,Ferramenta> ferramentas;
     private Map<String,Tarefa> tarefas;
-    public ReentrantLock l;
+    public ReentrantLock lt;
+    public ReentrantLock lf;
+    
     
     public Armazem(){
         this.ferramentas = new HashMap<String,Ferramenta>();
         this.tarefas = new HashMap<String,Tarefa>();
-        this.l = new ReentrantLock();
+        this.lt = new ReentrantLock();
+        this.lf = new ReentrantLock();
     }
 
     @Override
     public List<String> tarefasActivas() {
         ArrayList<String> res = new ArrayList<String>();
-        l.lock();
+        lt.lock();
         try{
             for(String s : tarefas.keySet()){
             if(!tarefas.get(res).getEstado())
@@ -38,7 +41,7 @@ public class Armazem implements InterfaceArmazem {
             }
         }
         finally{
-         l.unlock();   
+         lt.unlock();   
         }
         
     }
@@ -50,7 +53,7 @@ public class Armazem implements InterfaceArmazem {
 
     @Override
     public void abastece(String ferramenta, int quant) {
-        l.lock();
+        lf.lock();
         try{
             if(this.ferramentas.containsKey(ferramenta))
                 this.ferramentas.get(ferramenta).abastece(quant);
@@ -60,19 +63,20 @@ public class Armazem implements InterfaceArmazem {
             }
         }
         finally{
-            l.unlock();
+            lf.unlock();
         }
         
     }
+    
 
     @Override
     public void addTarefa(Tarefa t) {
-        l.lock();
+        lt.lock();
         try{
             this.tarefas.put(t.getID(), t);
         }
         finally{
-            l.unlock();
+            lt.unlock();
         }
         
     }
@@ -84,12 +88,12 @@ public class Armazem implements InterfaceArmazem {
 
     @Override
     public Tarefa getTarefa(String tarefa) {
-        l.lock();
+        lt.lock();
         try{
             return this.tarefas.get(tarefa);
         }
         finally{
-            l.unlock();
+            lt.unlock();
         }
     }
     
