@@ -28,6 +28,14 @@ public class Servidor {
         
         /*Cria uma thread para a consola do proprio servidor com o armazem em referencia*/
         
+        /*Algoritmo:login (Carlos) 
+            ->recebe ligação
+            ->verifica se user existe, se está logado e se passo esta correta
+            ->cria Thread TrataCliente
+            (se calhar a Thread TrataCliente vai passar a receber como args o out e o in, ou talvez não...)
+        */
+        
+        
         while(!exit){ /*exit é alterada na consola do servidor */
             
             Socket s = ss.accept();   //aceita o cliente
