@@ -9,6 +9,7 @@ package gestor_de_tarefas;
  *
  * @author xavier
  */
-public class Utilizador {
-    
+public interface InterfaceUtilizador {
+    public boolean validaPass(String passwd);
+    public String getUsername();
 }
