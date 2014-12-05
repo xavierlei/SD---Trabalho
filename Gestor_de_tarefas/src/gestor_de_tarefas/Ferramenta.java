@@ -44,6 +44,7 @@ public class Ferramenta implements InterfaceFerramenta{
         try {
             this.quantidade += qtd;
             this.disponivel +=qtd;
+            //envia sinal as Threds que estão adormecidas à espera de disponibilidade
             maisDisponivel.signalAll();
         } finally {
             lock.unlock();
@@ -65,6 +66,7 @@ public class Ferramenta implements InterfaceFerramenta{
         try {
             while(this.disponivel < qtd){
                 System.out.println("A disponibilidade de "+this.nome+" é "+this.quantidade+", vou esperar!");
+                //adormece e fica a espera que disponibilidade aumente
                 maisDisponivel.await();
             }
             this.disponivel -= qtd;
@@ -72,5 +74,10 @@ public class Ferramenta implements InterfaceFerramenta{
             lock.unlock();
         }            
     }
+    
+    public String toString() {
+        return "Ferramenta: nome=" + this.nome + ", quantidade=" + this.quantidade + ", disponibilidade " + this.disponivel + "; \n";
+    }
+    
     
 }
