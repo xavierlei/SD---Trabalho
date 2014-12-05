@@ -14,4 +14,6 @@ import java.util.Map;
 public interface InterfaceTarefa {
     public String getID();
     public Map<String,Integer> getPedidos();
+    public String getUtilizador();
+    public void concluir();
 }
