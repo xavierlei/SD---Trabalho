@@ -41,6 +41,10 @@ public class Tarefa implements InterfaceTarefa{
         return utilizador;
     }
     
+    public boolean getEstado(){
+        return concluida;
+    }
+    
     public void concluir(){
         this.concluida = true;
     }

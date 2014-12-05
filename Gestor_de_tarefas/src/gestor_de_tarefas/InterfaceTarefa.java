@@ -15,5 +15,6 @@ public interface InterfaceTarefa {
     public String getID();
     public Map<String,Integer> getPedidos();
     public String getUtilizador();
+    public boolean getEstado();
     public void concluir();
 }
