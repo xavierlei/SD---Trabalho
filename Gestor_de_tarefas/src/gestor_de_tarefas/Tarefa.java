@@ -49,5 +49,13 @@ public class Tarefa implements InterfaceTarefa{
         this.concluida = true;
     }
     
+    public String toString(){
+        StringBuilder res = new StringBuilder();
+        res.append("Ferramenta id : "+this.getID()+", user "+this.getUtilizador()+"\n");
+        for(String aux : this.pedidos.keySet())
+            res.append("--> "+aux+", "+this.pedidos.get(aux)+";\n");
+        return res.toString();
+    }
+    
 }
 
