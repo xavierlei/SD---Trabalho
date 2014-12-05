@@ -7,6 +7,7 @@ package gestor_de_tarefas;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  *
@@ -15,10 +16,12 @@ import java.util.Map;
 public class Armazem implements InterfaceArmazem {
     private Map<String,Ferramentas> ferramentas;
     private Map<String,Tarefas> tarefas;
+    public ReentrantLock l;
     
     public Armazem(){
         this.ferramentas = new HashMap<String,Ferramenta>();
         this.tarefas = new HashMap<String,Tarefas>();
+        this.l = new ReentrantLock();
     }
 
     @Override
