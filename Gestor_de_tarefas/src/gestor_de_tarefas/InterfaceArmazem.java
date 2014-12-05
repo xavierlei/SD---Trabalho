@@ -17,5 +17,5 @@ public interface InterfaceArmazem {
     public void abastece(String ferramenta, int quant);
     public void addTarefa(Tarefa t);
     public void executaTarefa(String t);
-    public Tarefa getTarefa();
+    public Tarefa getTarefa(String tarefa);
 }

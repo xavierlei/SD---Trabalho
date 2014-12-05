@@ -25,12 +25,12 @@ public class Utilizador implements InterfaceUtilizador {
 
     @Override
     public boolean validaPass(String passwd) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return (this.password.equals(passwd));
     }
 
     @Override
     public String getUsername() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.username;
     }
     
 }
