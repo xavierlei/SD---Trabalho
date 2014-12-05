@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -36,13 +38,13 @@ public class Armazem implements InterfaceArmazem {
         try{
             for(String s : tarefas.keySet()){
             if(!tarefas.get(res).getEstado())
-                res.add(s);
-            return res;
+                res.add(s);           
             }
         }
         finally{
          lt.unlock();   
         }
+        return res;
         
     }
 
@@ -81,9 +83,26 @@ public class Armazem implements InterfaceArmazem {
         
     }
 
-    @Override
-    public void executaTarefa(String t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void executaTarefa(String id){
+        Map<String, Integer> pedidos = this.tarefas.get(id).getPedidos();
+        
+        /*antes de a tarefa ser criada, devera ser verificado que as Ferramentas existem no Armazem
+            aqui, é assumido que todas as Ferramentas do pedido existem no armazem*/
+        for(String aux : pedidos.keySet()){
+            try {
+                this.ferramentas.get(aux).reserva(pedidos.get(aux));
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Armazem.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    public void terminaTarefa(String id){
+        Map<String, Integer> pedidos = this.tarefas.get(id).getPedidos();
+        
+        for(String aux : pedidos.keySet()){
+            this.ferramentas.get(aux).reabastece(pedidos.get(aux));
+        }
     }
 
     @Override
@@ -96,5 +115,21 @@ public class Armazem implements InterfaceArmazem {
             lt.unlock();
         }
     }
+
+    public String toString(){
+        StringBuilder res = new StringBuilder();
+        
+        res.append("+++++++     Armazem     +++++++\n");
+        res.append("******     Ferrmntas     ******\n");
+        for(Ferramenta f : this.ferramentas.values())
+            res.append(f.toString());
+        res.append("******     Tarefas     ******\n");
+        for(Tarefa t : this.tarefas.values())
+            res.append(t.toString());
+        res.append("++++++++++++++++++++++++++++++++\n");
+        return res.toString();
+    }
+    
+    
     
 }
