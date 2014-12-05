@@ -7,9 +7,9 @@ package gestor_de_tarefas;
 
 /**
  *
- * @author carlosmorais
+ * @author xavier
  */
-public class Ferramenta {
-    private String id; 
-    
+public interface InterfaceUtilizador {
+    public boolean validaPass(String passwd);
+    public String getUsername();
 }
