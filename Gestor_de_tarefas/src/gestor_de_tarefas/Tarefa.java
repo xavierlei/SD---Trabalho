@@ -29,6 +29,13 @@ public class Tarefa implements InterfaceTarefa{
         this.concluida = false;
     }
     
+    /*
+        ->uma Tarefa tem um estado;
+        ->a funcao notificaTarefas(List<String> lista) verifica se todas as tarefas na lista estao concluidas, 
+    se não estiverem, adormece à espera do sinal acordar para voltar a verificar
+        ->quando uma tarefa é concluida envia signalAll(acordar)
+    */
+    
     public String getID() {
         return ID;
     }
