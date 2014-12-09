@@ -32,11 +32,11 @@ public class Cliente {
             
             //le as mensagens do Utilizador e envia para o Servidor
             //em principio o pedido de login é feito aqui, mas é aceite no Servidor (...)
-            while( !(pedido=userInput.readLine()).equals("sair") ){
+            while( !(pedido=userInput.readLine()).equals("logout") ){
                 output.println(pedido);
                 output.flush();
-                pedido = serverInput.readLine();
-                System.out.println("Servidor "+pedido);
+                //pedido = serverInput.readLine();
+                //System.out.println("Servidor "+pedido);
             }            
             s.shutdownInput();
             s.shutdownOutput();

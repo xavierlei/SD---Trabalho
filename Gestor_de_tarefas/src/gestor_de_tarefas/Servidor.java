@@ -19,9 +19,10 @@ public class Servidor {
     
     public static void main(String[] args) throws Exception{
         
-        int port = 12345;
+        int port = 44555;
         ServerSocket ss;
         boolean exit = false;
+        Armazem armazem = new Armazem();
         
         ss = new ServerSocket(port);
         System.out.println("Soc Criado!");
@@ -35,6 +36,12 @@ public class Servidor {
             (se calhar a Thread TrataCliente vai passar a receber como args o out e o in, ou talvez não...)
         */
         
+        /*deverá ser criada uma Thread que fica a ler os pedidos da consola*/
+        
+        while(!exit){
+            Socket s = ss.accept();
+            new Thread(new Thread_TrataCliente(armazem,s)).start();
+        }
         
         while(!exit){ /*exit é alterada na consola do servidor */
             
@@ -59,6 +66,7 @@ public class Servidor {
             s.close();
             }   
         }
+        
         ss.close();
     } 
 }

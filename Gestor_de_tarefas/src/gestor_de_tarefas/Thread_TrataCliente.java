@@ -32,7 +32,7 @@ public class Thread_TrataCliente implements Runnable {
             String pedido;                        
             PrintWriter out = new PrintWriter(this.mySocket.getOutputStream());
             BufferedReader in = new BufferedReader( new InputStreamReader(this.mySocket.getInputStream()));
-            
+            System.out.println("Nova conexão com o cliente " +  mySocket.getInetAddress().getHostAddress());
             //le o pedido do Cliente
             while( ((pedido=in.readLine()) != null) && (!pedido.equals("logout")) ){
                 /*fara sentido criar uma Thread que vai executar o pedido ?!
@@ -42,8 +42,13 @@ public class Thread_TrataCliente implements Runnable {
                 
                 //Thread para tratar os pedidos do Cliente
                 Thread cr = new Thread( new Thread_TrataPedido(this.armazem, out, pedido));
-                cr.start();                
-            }            
+                cr.start(); 
+                
+            }
+            
+            System.out.println("logout efetuado com sucesso em "+mySocket.getInetAddress().getHostAddress());
+            out.flush();
+            
             this.mySocket.shutdownInput();
             this.mySocket.shutdownOutput();
             this.mySocket.close();            

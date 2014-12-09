@@ -23,14 +23,15 @@ public class Thread_TrataPedido implements Runnable {
     }
     
     public void run(){
-        String resposta = null;
+        String resposta = "o pedido ** " +pedido+ " ** foi recebido e tratado";
         /* como é feito o pedido? String?
             então, parser no pedido, com o switch é escolhido o metodo a executar no Armazem?
         */
         /*executa
             dependendo do metodo executado, é criada a String resposta e enviada para o Cliente
         */        
-        //envia resposta para o Clienete       
+        //envia resposta para o Cliente          
+        
         out.println(resposta);
         out.flush();
     }
