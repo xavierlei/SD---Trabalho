@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,6 +23,7 @@ public class Armazem implements InterfaceArmazem {
     private Map<String,Tarefa> tarefas;
     public ReentrantLock lt;
     public ReentrantLock lf;
+
     
     
     public Armazem(){
@@ -42,31 +44,32 @@ public class Armazem implements InterfaceArmazem {
             }
         }
         finally{
-         lt.unlock();   
+         lt.unlock(); 
+         return res;
         }
-        return res;
+        
         
     }
 
     @Override
-    public void notifications(List<String> tarefas) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void notifications(List<String> tarefas) throws TarefaException{
+        for(String s : tarefas){
+            if(!this.tarefas.containsKey(s))
+                throw new TarefaException("Tarefa não existe");
+            while(!this.tarefas.get(s).getEstado())
+                this.tarefas.get(s).c.await();
+        }
     }
 
     @Override
     public void abastece(String ferramenta, int quant) {
-        lf.lock();
-        try{
-            if(this.ferramentas.containsKey(ferramenta))
-                this.ferramentas.get(ferramenta).abastece(quant);
-            else{
-                Ferramenta f = new Ferramenta(ferramenta,quant);
-                this.ferramentas.put(ferramenta,f);
-            }
+        if(this.ferramentas.containsKey(ferramenta))
+            this.ferramentas.get(ferramenta).abastece(quant);
+        else{
+            Ferramenta f = new Ferramenta(ferramenta,quant);
+            this.ferramentas.put(ferramenta,f);
         }
-        finally{
-            lf.unlock();
-        }
+
         
     }
     
@@ -83,11 +86,13 @@ public class Armazem implements InterfaceArmazem {
         
     }
 
-    public void executaTarefa(String id){
+    public void executaTarefa(String id) throws FerramentaException{
         Map<String, Integer> pedidos = this.tarefas.get(id).getPedidos();
         
-        /*antes de a tarefa ser criada, devera ser verificado que as Ferramentas existem no Armazem
-            aqui, é assumido que todas as Ferramentas do pedido existem no armazem*/
+        for(String s : pedidos.keySet()){
+            if(!this.ferramentas.containsKey(s))
+                throw new FerramentaException("ferramenta não existe");
+        }   
         for(String aux : pedidos.keySet()){
             try {
                 this.ferramentas.get(aux).reserva(pedidos.get(aux));
