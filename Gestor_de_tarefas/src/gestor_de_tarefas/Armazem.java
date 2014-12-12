@@ -52,12 +52,12 @@ public class Armazem implements InterfaceArmazem {
     }
 
     @Override
-    public void notifications(List<String> tarefas) throws TarefaException{
-        for(String s : tarefas){
-            if(!this.tarefas.containsKey(s))
-                throw new TarefaException("Tarefa não existe");
-            while(!this.tarefas.get(s).getEstado())
-                this.tarefas.get(s).c.await();
+    public void notifications(String userID){
+        for(String s : this.tarefas.keySet()){
+            if(this.tarefas.get(s).getUtilizador().equals(userID)){
+                while(!this.tarefas.get(s).getEstado())
+                    this.tarefas.get(s).c.await();
+            }  
         }
     }
 
