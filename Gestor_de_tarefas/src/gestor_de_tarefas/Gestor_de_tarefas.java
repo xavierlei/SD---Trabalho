@@ -6,6 +6,8 @@
 package gestor_de_tarefas;
 
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -50,10 +52,15 @@ public class Gestor_de_tarefas {
         arm.addTarefa(new Tarefa("1001",pedido2,"2"));
         arm.addTarefa(new Tarefa("1002",pedido3,"3"));
   
-        //executa Tarefas
-        arm.executaTarefa("1000");
-        arm.executaTarefa("1001");
-        arm.executaTarefa("1002");        
+        try {
+            //executa Tarefas
+            arm.executaTarefa("1000");
+            arm.executaTarefa("1001");
+            arm.executaTarefa("1002"); 
+        } catch (FerramentaException ex) {
+            Logger.getLogger(Gestor_de_tarefas.class.getName()).log(Level.SEVERE, null, ex);
+        }
+               
         
         //termina Tarefas
         arm.terminaTarefa("1000");

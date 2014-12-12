@@ -56,7 +56,11 @@ public class Armazem implements InterfaceArmazem {
         for(String s : this.tarefas.keySet()){
             if(this.tarefas.get(s).getUtilizador().equals(userID)){
                 while(!this.tarefas.get(s).getEstado())
-                    this.tarefas.get(s).c.await();
+                    try {
+                        this.tarefas.get(s).c.await();
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(Armazem.class.getName()).log(Level.SEVERE, null, ex);
+                    }
             }  
         }
     }

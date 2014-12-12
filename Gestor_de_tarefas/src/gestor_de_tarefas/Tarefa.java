@@ -32,9 +32,7 @@ public class Tarefa implements InterfaceTarefa{
         this.c = l.newCondition();
     }
     
-<<<<<<< HEAD
-    @Override
-=======
+
     /*
         ->uma Tarefa tem um estado;
         ->a funcao notificaTarefas(List<String> lista) verifica se todas as tarefas na lista estao concluidas, 
@@ -42,7 +40,6 @@ public class Tarefa implements InterfaceTarefa{
         ->quando uma tarefa é concluida envia signalAll(acordar)
     */
     
->>>>>>> FETCH_HEAD
     public String getID() {
         return ID;
     }

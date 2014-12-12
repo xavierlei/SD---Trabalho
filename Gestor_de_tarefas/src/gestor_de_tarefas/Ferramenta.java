@@ -68,6 +68,7 @@ public class Ferramenta implements InterfaceFerramenta{
                 System.out.println("A disponibilidade de "+this.nome+" é "+this.quantidade+", vou esperar!");
                 //adormece e fica a espera que disponibilidade aumente
                 maisDisponivel.await();
+                //maisDisponivel.awaitNanos(xxx);
             }
             this.disponivel -= qtd;
         } finally {
