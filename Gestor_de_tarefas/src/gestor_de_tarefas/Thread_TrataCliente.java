@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,21 +22,50 @@ import java.util.logging.Logger;
 public class Thread_TrataCliente implements Runnable {
     private Armazem armazem;
     private final Socket mySocket;
-    private Utilizador user;
+    HashMap <String,Utilizador> users; //users que estao registados
+    Utilizador user;
     PrintWriter out;
     BufferedReader in;
     
     /*No servidor depois do accept, é criada a Thread*/
-    public Thread_TrataCliente(Armazem a, Socket s, Utilizador u, PrintWriter o, BufferedReader i){
+    public Thread_TrataCliente(Armazem a, Socket s, HashMap <String,Utilizador> u){
         this.armazem = a;    
         this.mySocket = s;
-        this.user = u;
-        this.out = o;
-        this.in = i;
+        this.users = u;
+    }
+    
+    public void login(){
+        
     }
     
     public void run(){
         try {
+            out = new PrintWriter(mySocket.getOutputStream());            
+            in = new BufferedReader(
+                                    new InputStreamReader(mySocket.getInputStream()));
+            
+            /*tenta fazer login*/
+            String l;
+            boolean continua = true;
+            while( continua && ((l = in.readLine()) != null)){
+                String parse[] =  l.split(" ");
+                    if(parse[0].equals("login")){ 
+                        if(users.containsKey(parse[1])){ //verifica se user existe
+                            Utilizador u = users.get(parse[1]);
+                            if(!u.getloged()){ //verifica se já esta loged
+                               if(u.validaPass(parse[2])){ // verifica pass
+                                    out.println("Loged: ...");                  
+                                    u.login();
+                                    this.user = u;
+                                    out.flush();          
+                                    continua = false;
+                               } else { out.println("Password Errada!!"); out.flush();}
+                            } else { out.println("Utilizador já de encontra autenticado!"); out.flush();}
+                        }else { out.println("Utilizador não existe!"); out.flush();} 
+                    } else { out.println("Go fock your self! learn to write!"); out.flush();}
+            }
+
+            
             String pedido;                        
             //PrintWriter out = new PrintWriter(this.mySocket.getOutputStream());
             //BufferedReader in = new BufferedReader( new InputStreamReader(this.mySocket.getInputStream()));

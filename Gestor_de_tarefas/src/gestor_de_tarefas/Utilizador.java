@@ -36,7 +36,9 @@ public class Utilizador implements InterfaceUtilizador {
     }
     
     public void login(){
+        l.lock();
         this.loged = true;
+        l.unlock();
     }
     
     public void logout(){
@@ -44,6 +46,12 @@ public class Utilizador implements InterfaceUtilizador {
     }
     
     public boolean getloged(){
-        return this.loged;
+        l.lock();
+        try{
+            return this.loged;
+        }
+        finally{
+            l.unlock();
+        }
     }
 }

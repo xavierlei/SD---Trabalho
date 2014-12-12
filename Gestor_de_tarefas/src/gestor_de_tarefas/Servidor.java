@@ -43,30 +43,8 @@ public class Servidor {
         
         while(!exit){ /*exit é alterada na consola do servidor */            
             Socket s = ss.accept();   //aceita o cliente
-            PrintWriter o = new PrintWriter(s.getOutputStream());            
-            BufferedReader i = new BufferedReader(
-                                    new InputStreamReader(s.getInputStream())); 
-            String l;
-            boolean continua = true;
-            while( continua && ((l = i.readLine()) != null)){
-                String parse[] =  l.split(" ");
-                    if(parse[0].equals("login")){ 
-                        if(users.containsKey(parse[1])){ //verifica se user existe
-                            Utilizador u = users.get(parse[1]);
-                            if(!u.getloged()){ //verifica se já esta loged
-                               if(u.validaPass(parse[2])){ // verifica pass
-                                    o.println("Loged: ...");
-                                    u.login();
-                                    o.flush();
-                                    //s.shutdownInput();            
-                                    continua = false;
-                                    t = new Thread(new Thread_TrataCliente(armazem,s,u,o,i)); // falta enviar tambem o utilizador
-                                    t.start();
-                               } else { o.println("Password Errada!!"); o.flush();}
-                            } else { o.println("Utilizador já de encontra autenticado!"); o.flush();}
-                        }else { o.println("Utilizador não existe!"); o.flush();} 
-                    } else { o.println("Go fock your self! learn to write!"); o.flush();}
-            }
+            t = new Thread(new Thread_TrataCliente(armazem,s,users)); // falta enviar tambem o utilizador
+            t.start();
             //s.close();
         }
         
