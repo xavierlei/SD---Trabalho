@@ -42,9 +42,11 @@ public class Thread_TrataPedido implements Runnable {
     }
     
     public void run(){
-        String resposta = "***";
+        String resposta="";
         System.out.println("o pedido ** " +pedido+ " ** foi recebido e tratado");
-        String lista[] = pedido.split("");
+        String lista[] = pedido.split(" ");
+        //for(String aux : lista)
+            //System.out.println("->"+aux+"<-");
         
         switch (lista[0]){
             case "abastece": 
@@ -66,8 +68,9 @@ public class Thread_TrataPedido implements Runnable {
                 this.armazem.addTarefa(t);
                 resposta = "controi a tarefa" + lista[1];
                 break;
-            case "print":                                 
-                this.pedido = this.armazem.toString();
+            case "print": 
+                System.out.println("OK");
+                resposta = this.armazem.toString();
                 break;        
             default:
                 break;                

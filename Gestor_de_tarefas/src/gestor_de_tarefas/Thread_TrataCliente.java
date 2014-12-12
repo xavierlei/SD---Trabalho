@@ -43,7 +43,6 @@ public class Thread_TrataCliente implements Runnable {
             
             //le o pedido do Cliente
             while( (pedido=in.readLine()) != null ){
-                System.out.println("passa");
                 Thread cr = new Thread( new Thread_TrataPedido(this.armazem, this.user.getUsername(), out, pedido));
                 cr.start();                 
             }

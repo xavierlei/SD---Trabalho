@@ -48,7 +48,7 @@ public class Servidor {
                                     new InputStreamReader(s.getInputStream())); 
             String l;
             boolean continua = true;
-            while( ((l = i.readLine()) != null) && continua){
+            while( continua && ((l = i.readLine()) != null)){
                 String parse[] =  l.split(" ");
                     if(parse[0].equals("login")){ 
                         if(users.containsKey(parse[1])){ //verifica se user existe
