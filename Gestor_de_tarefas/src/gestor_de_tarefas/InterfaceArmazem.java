@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface InterfaceArmazem {
     public List<String>tarefasActivas();
-    public void notifications(List<String> tarefas) throws TarefaException;
+    public void notifications(String userID);
     public void abastece(String ferramenta, int quant);
     public void addTarefa(Tarefa t);
     public void executaTarefa(String t)throws FerramentaException;
