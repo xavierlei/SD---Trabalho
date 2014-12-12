@@ -35,14 +35,28 @@ public class Utilizador implements InterfaceUtilizador {
         return this.username;
     }
     
-    public void login(){
+    public boolean login(){
         l.lock();
-        this.loged = true;
-        l.unlock();
+        try{
+            if(!this.loged){
+                this.loged = true;
+                return true;
+            }
+            else
+                return false;
+        }
+        finally{
+            l.unlock();
+        }
     }
     
     public void logout(){
-        this.loged = false;
+        l.lock();
+        try {
+            this.loged = false;
+        } finally {
+            l.unlock();
+        }
     }
     
     public boolean getloged(){

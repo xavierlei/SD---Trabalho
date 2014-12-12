@@ -53,12 +53,16 @@ public class Thread_TrataCliente implements Runnable {
                         if(users.containsKey(parse[1])){ //verifica se user existe
                             Utilizador u = users.get(parse[1]);
                             if(!u.getloged()){ //verifica se já esta loged
-                               if(u.validaPass(parse[2])){ // verifica pass
-                                    out.println("Loged: ...");                  
-                                    u.login();
-                                    this.user = u;
-                                    out.flush();          
-                                    continua = false;
+                               if(u.validaPass(parse[2])){ // verifica pass              
+                                    if(u.login()){
+                                        out.println("Loged: ..."); 
+                                        this.user = u;
+                                        out.flush();          
+                                        continua = false;
+                                    }
+                                    else{
+                                        out.println("Utilizador já de encontra autenticado!"); out.flush();
+                                    }                                  
                                } else { out.println("Password Errada!!"); out.flush();}
                             } else { out.println("Utilizador já de encontra autenticado!"); out.flush();}
                         }else { out.println("Utilizador não existe!"); out.flush();} 
