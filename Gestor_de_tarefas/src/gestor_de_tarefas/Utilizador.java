@@ -16,11 +16,13 @@ public class Utilizador implements InterfaceUtilizador {
     private String username;
     private String password;
     public ReentrantLock l;
+    private boolean loged;
     
     public Utilizador(String username, String pwd){
         this.username = username;
         this.password = pwd;
         this.l = new ReentrantLock();
+        this.loged = false;
     }
 
     @Override
@@ -33,4 +35,15 @@ public class Utilizador implements InterfaceUtilizador {
         return this.username;
     }
     
+    public void login(){
+        this.loged = true;
+    }
+    
+    public void logout(){
+        this.loged = false;
+    }
+    
+    public boolean getloged(){
+        return this.loged;
+    }
 }
