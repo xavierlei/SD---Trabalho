@@ -19,7 +19,6 @@ public class Cliente {
     
     public static void main(String[] args) throws IOException {      
         try ( 
-            //a porta no Servidor tem de ser a mesma!
             Socket s = new Socket("localhost", 44555)) {
             String pedido;
             BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
@@ -30,13 +29,27 @@ public class Cliente {
             Thread cr = new Thread( new Thread_ClienteRead(serverInput));
             cr.start();
             
+            /*TESTE*/
+            output.println("login carlos 123");
+            output.flush();
+            output.println("abastece martelo 10");
+            output.flush();
+            output.println("abastece prego 40");
+            output.flush();
+            output.println("abastece chave 10");
+            output.flush();
+            output.println("adiciona cadeira martelo 2 prego 10");
+            output.flush();
+            output.println("adiciona cmesa martelo 3 chave 2");
+            output.flush();
+            output.println("print");
+            output.flush();
+            
             //le as mensagens do Utilizador e envia para o Servidor
-            //em principio o pedido de login é feito aqui, mas é aceite no Servidor (...)
+            //fara sentido tratar os pedidos aqui, de forma a irem limpos para o servidor
             while( !(pedido=userInput.readLine()).equals("logout") ){
                 output.println(pedido);
                 output.flush();
-                //pedido = serverInput.readLine();
-                //System.out.println("Servidor "+pedido);
             }            
             s.shutdownInput();
             s.shutdownOutput();

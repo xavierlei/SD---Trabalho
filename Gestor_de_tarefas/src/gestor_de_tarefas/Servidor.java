@@ -24,30 +24,24 @@ public class Servidor {
         Thread t;       
         
         ss = new ServerSocket(port);
-        System.out.println("Soc Criado!");        
+        System.out.println("Socket Criado!");        
         
-        /* * * * * * * * * * * *
-         *       Teste            
-         * * * * * * * * * * * */
+        /*adiciona utilizadores para teste*/
         Utilizador u1 = new Utilizador("xavier","123");
-        users.put("xavier", u1);        
+        Utilizador u2 = new Utilizador("carlos","123");
+        Utilizador u3 = new Utilizador("filipe","123");
+        users.put("xavier", u1);
+        users.put("carlos", u2); 
+        users.put("filipe", u3); 
         
-        /*Cria uma thread para a consola do proprio servidor com o armazem em referencia*/
-        
-        /*Algoritmo:login (Carlos) 
-            ->recebe ligação  
-            ->verifica se user existe, se está logado e se passo esta correta
-            ->cria Thread TrataCliente
-            (se calhar a Thread TrataCliente vai passar a receber como args o out e o in, ou talvez não...)
-        */        
-        
-        while(!exit){ /*exit é alterada na consola do servidor */            
-            Socket s = ss.accept();   //aceita o cliente
+        /*Cria aqui uma thread para a consola do proprio servidor com o armazem em referencia*/
+             
+        //cria conexão com Clientes
+        while(!exit){            
+            Socket s = ss.accept(); 
             t = new Thread(new Thread_TrataCliente(armazem,s,users)); // falta enviar tambem o utilizador
             t.start();
-            //s.close();
-        }
-        
+        }        
         ss.close();
     }
 }

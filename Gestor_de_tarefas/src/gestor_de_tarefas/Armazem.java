@@ -72,9 +72,7 @@ public class Armazem implements InterfaceArmazem {
         else{
             Ferramenta f = new Ferramenta(ferramenta,quant);
             this.ferramentas.put(ferramenta,f);
-        }
-
-        
+        }        
     }
     
 
@@ -86,8 +84,7 @@ public class Armazem implements InterfaceArmazem {
         }
         finally{
             lt.unlock();
-        }
-        
+        }        
     }
 
     public void executaTarefa(String id) throws FerramentaException{
