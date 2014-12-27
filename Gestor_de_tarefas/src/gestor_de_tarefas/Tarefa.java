@@ -1,88 +1,69 @@
-package gestor_de_tarefas;
-
-
-import java.util.Map;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+package gestor_de_tarefas;
+
+import java.util.Map;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  *
- * @author filiperibeiro
+ * @author carlosmorais
  */
-public class Tarefa implements InterfaceTarefa{
-    private String ID;
-    private Map<String,Integer> pedidos;
+public class Tarefa {
+    private String id;
     private String utilizador;
-    public ReentrantLock l;
-    private boolean concluida;
-    public Condition c;
+    private boolean terminado;
     
-    public Tarefa(String ID, Map<String, Integer> pedidos, String utilizador) {
-        this.ID = ID;
-        this.pedidos = pedidos;
+    final Lock lock = new ReentrantLock();
+    final Condition termina = lock.newCondition();
+
+    public Tarefa(String id, String utilizador) {
+        this.id = id;
         this.utilizador = utilizador;
-        this.l = new ReentrantLock();
-        this.concluida = false;
-        this.c = l.newCondition();
-    }
-    
-
-    /*
-        ->uma Tarefa tem um estado;
-        ->a funcao notificaTarefas(List<String> lista) verifica se todas as tarefas na lista estao concluidas, 
-    se não estiverem, adormece à espera do sinal acordar para voltar a verificar
-        ->quando uma tarefa é concluida envia signalAll(acordar)
-    */
-    
-    public String getID() {
-        return ID;
+        this.terminado = false;
     }
 
-    @Override
-    public Map<String, Integer> getPedidos() {
-            return pedidos;
+    public String getId() {
+        return this.id;
     }
 
-    @Override
     public String getUtilizador() {
-        return utilizador;
+        return this.utilizador;
     }
+
+    public boolean isTerminado() {        
+        return this.terminado;
+    }        
     
-    @Override
-    public boolean getEstado(){
-        l.lock();
+    public void termina(){
+        lock.lock();
         try {
-            return concluida;
+            this.terminado = true;
+            termina.signalAll();
         } finally {
-            l.unlock();
+            lock.unlock();
         }
     }
     
-    @Override
-    public void concluir(){
-        l.lock();
+    public void espera() throws InterruptedException{
+        lock.lock();
         try {
-            this.concluida = true;
+            while(!this.terminado)
+                termina.await();
         } finally {
-            l.unlock();
+            lock.unlock();
         }
-        this.c.signalAll();
     }
-    
+
+
     @Override
-    public String toString(){
-        StringBuilder res = new StringBuilder();
-        res.append("Ferramenta id : "+this.getID()+", user "+this.getUtilizador()+"\n");
-        for(String aux : this.pedidos.keySet())
-            res.append("--> "+aux+", "+this.pedidos.get(aux)+";\n");
-        return res.toString();
-    }
+    public String toString() {
+        return "=> Tarefa id = " + id + ", utilizador = " + utilizador + ";\n";
+    }        
     
 }
-

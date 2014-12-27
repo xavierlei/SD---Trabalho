@@ -11,46 +11,46 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  * @author xavier
  */
-public class Utilizador implements InterfaceUtilizador {
-    
+public class Utilizador {
+
     private String username;
     private String password;
     public ReentrantLock l;
     private boolean loged;
     
-    public Utilizador(String username, String pwd){
+    /*se os utilizadores guardassem os IN/OUT seria fantastico, pois as mensagens 
+    mantinham-se apos um logout.*/
+
+    public Utilizador(String username, String pwd) {
         this.username = username;
         this.password = pwd;
         this.l = new ReentrantLock();
         this.loged = false;
     }
 
-    @Override
     public boolean validaPass(String passwd) {
         return (this.password.equals(passwd));
     }
-
-    @Override
+    
     public String getUsername() {
         return this.username;
     }
-    
-    public boolean login(){
+
+    public boolean login() {
         l.lock();
-        try{
-            if(!this.loged){
+        try {
+            if (!this.loged) {
                 this.loged = true;
                 return true;
-            }
-            else
+            } else {
                 return false;
-        }
-        finally{
+            }
+        } finally {
             l.unlock();
         }
     }
-    
-    public void logout(){
+
+    public void logout() {
         l.lock();
         try {
             this.loged = false;
@@ -58,13 +58,12 @@ public class Utilizador implements InterfaceUtilizador {
             l.unlock();
         }
     }
-    
-    public boolean getloged(){
+
+    public boolean getloged() {
         l.lock();
-        try{
+        try {
             return this.loged;
-        }
-        finally{
+        } finally {
             l.unlock();
         }
     }

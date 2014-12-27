@@ -35,11 +35,12 @@ public class Servidor {
         users.put("filipe", u3); 
         
         /*Cria aqui uma thread para a consola do proprio servidor com o armazem em referencia*/
+        //apenas se liga um utilizador (...)
              
         //cria conexão com Clientes
         while(!exit){            
             Socket s = ss.accept(); 
-            t = new Thread(new Thread_TrataCliente(armazem,s,users)); // falta enviar tambem o utilizador
+            t = new Thread(new Thread_TrataCliente(armazem,s,users));
             t.start();
         }        
         ss.close();

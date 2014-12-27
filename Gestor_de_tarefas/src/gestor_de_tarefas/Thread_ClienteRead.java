@@ -27,11 +27,12 @@ public class Thread_ClienteRead implements Runnable{
         try {
             //recebe mensagens do servidor e imprime
             String line;
-            while( (line = inputServer.readLine()) != null ){
+            /*há um pequeno bug aqui, por vezes quando é feito logout, isto ainda 
+                    é executado*/
+            while((line = inputServer.readLine()) != null ){
                 System.out.println(line);
             }
-        } catch (IOException ex) {
-            Logger.getLogger(Thread_ClienteRead.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {            
         }
     }               
 }

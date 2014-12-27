@@ -11,7 +11,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -61,7 +60,7 @@ public class Thread_TrataCliente implements Runnable {
                 } else { out.println("Go fuck your self! learn to write!"); out.flush();}
             }
             
-            //teste
+            //teste -> APAGAR ISTO
             System.out.println("Nova conexão com o cliente " +  mySocket.getInetAddress().getHostAddress());
             
             //le o pedido do Cliente e cria Thread para o tartar
@@ -69,10 +68,10 @@ public class Thread_TrataCliente implements Runnable {
                 Thread cr = new Thread( new Thread_TrataPedido(this.armazem, this.user.getUsername(), out, pedido));
                 cr.start();                 
             }
-            //teste
+            //teste -> APAGAR ISTO
             System.out.println("logout efetuado com sucesso em "+mySocket.getInetAddress().getHostAddress());
             
-            //caso seja logout terá de fazer mais alguma coisa (...)
+            //caso seja logout terá de fazer mais alguma coisa! (já nao sei o que...)
             this.user.logout();
             
             this.mySocket.shutdownInput();

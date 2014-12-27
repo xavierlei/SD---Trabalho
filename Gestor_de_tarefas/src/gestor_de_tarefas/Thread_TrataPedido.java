@@ -6,7 +6,9 @@
 package gestor_de_tarefas;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,28 +29,25 @@ public class Thread_TrataPedido implements Runnable {
         this.userID = userID;
     }
     
-    public Tarefa constroiTarefa(String lista[]){
+    public TipoTarefa constroiTarefa(String lista[]){
         
-        HashMap<String,Integer> pedidos = new HashMap<String,Integer>();
+        HashMap<String,Integer> pedidos = new HashMap<>();
         String id = lista[1];
         
         for(int i=2; i<lista.length; ){
             String nome = lista[i];
             i++;
-            //System.out.println("***"+lista[i]+"***");
             int qtd = Integer.parseInt(lista[i]);
             pedidos.put(nome, qtd);
             i++;
         }
-        return (new Tarefa(id, pedidos,userID));
+        return (new TipoTarefa(id, pedidos));
     }
     
     public void run(){
-        String resposta="";
+        String resposta=null;
         System.out.println("o pedido ** " +pedido+ " ** foi recebido e tratado");
         String lista[] = pedido.split(" ");
-        /*for(String aux : lista)
-            System.out.println("->"+aux+"<-");*/
         
         switch (lista[0]){
             case "abastece": 
@@ -59,32 +58,51 @@ public class Thread_TrataPedido implements Runnable {
             case "executa": 
         {
             try {
-                this.armazem.executaTarefa(lista[1]);
+                resposta = this.armazem.executaTarefa(lista[1],userID);
             } catch (FerramentaException ex) {
                 Logger.getLogger(Thread_TrataPedido.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-                resposta = "executou a tarefa "+lista[1];
+                resposta=  "executa a tarefa "+lista[1]+" como o id "+resposta;                
                 break;
             
             case "adiciona": 
-                Tarefa t = constroiTarefa(lista);
+                TipoTarefa t = constroiTarefa(lista);
                 this.armazem.addTarefa(t);
                 resposta = "controi a tarefa " + lista[1];
                 break;
             
             case "notifica": 
-                this.armazem.notifications(userID);
-                resposta = "notifica " + lista[1];
-                break;    
+                List<String> ids = new ArrayList<String>();
+                for(int i=1; i<lista.length; i++)
+                    ids.add(lista[i]);
+                    
+        {
+            try {
+                this.armazem.notifica(ids);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Thread_TrataPedido.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+                resposta = "notifica ";
+                break;  
+                    
+            case "listagem":
+                resposta = this.armazem.listagemTarefas();
+                break;
             
             case "termina":   
-                this.armazem.terminaTarefa(lista[1]);
+        {
+            try {
+                this.armazem.terminaTarefa(lista[1], userID);
                 resposta = "termina a tarefa " + lista[1];
-                break;     
+            } catch (TarefaException ex) {
+                resposta = ex.getMessage();
+            }
+        }                
+                break;          
             
             case "print": 
-                System.out.println("OK");
                 resposta = this.armazem.toString();
                 break;        
             

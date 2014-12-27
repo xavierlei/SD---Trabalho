@@ -5,11 +5,10 @@
  */
 package gestor_de_tarefas;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,124 +17,161 @@ import java.util.logging.Logger;
  *
  * @author xavier
  */
-public class Armazem implements InterfaceArmazem {
-    private Map<String,Ferramenta> ferramentas;
-    private Map<String,Tarefa> tarefas;
-    public ReentrantLock lt;
-    public ReentrantLock lf;
+public class Armazem  {
 
+    private Map<String, Ferramenta> ferramentas;
+    private Map<String, TipoTarefa> tiposTarefa;
+    private ReentrantLock lockFerr;
+    private ReentrantLock lockTipos;
+    private Integer idGen=1000;
+
+    public Armazem() {
+        this.ferramentas = new HashMap<>();
+        this.tiposTarefa = new HashMap<>();
+        
+        this.lockFerr = new ReentrantLock();
+        this.lockTipos = new ReentrantLock();
+    }
     
     
-    public Armazem(){
-        this.ferramentas = new HashMap<String,Ferramenta>();
-        this.tarefas = new HashMap<String,Tarefa>();
-        this.lt = new ReentrantLock();
-        this.lf = new ReentrantLock();
+    public String listagemTarefas(){        
+        StringBuilder res = new StringBuilder();
+      
+        for (TipoTarefa t : this.tiposTarefa.values()) {
+            res.append(t.lista());
+            res.append("\n");
+        }
+        return res.toString();
+    }   
+ 
+    
+    public Tarefa getTarefa(String id){
+        TipoTarefa tipo;
+        Iterator it;
+        lockTipos.lock();
+        try {
+            it = this.tiposTarefa.values().iterator();
+        } finally {
+            lockTipos.unlock();
+        }
+        boolean flag = true;
+        
+        while (flag && it.hasNext()){
+            tipo = (TipoTarefa) it.next();
+            if(tipo.existeID(id))
+                return tipo.getTarefa(id);
+        }                   
+        return null;
+    }
+    
+    public void notifica(List<String> ids) throws InterruptedException{
+        Tarefa t;
+        for(String id: ids){
+           t = this.getTarefa(id);
+           t.espera();
+        }
+    }
+    
+    public void abastece(String ferramenta, int quant) {
+        lockFerr.lock();
+        try {
+            if (this.ferramentas.containsKey(ferramenta)) {
+                this.ferramentas.get(ferramenta).abastece(quant);
+            } else {
+                Ferramenta f = new Ferramenta(ferramenta, quant);
+                this.ferramentas.put(ferramenta, f);
+            }
+        } finally {
+            lockFerr.unlock();
+        }
+    }
+    
+    public void addTarefa(TipoTarefa t) {
+        lockFerr.lock();
+        try {
+            this.tiposTarefa.put(t.getID(), t);
+        } finally {
+            lockFerr.unlock();
+        }
     }
 
-    @Override
-    public List<String> tarefasActivas() {
-        ArrayList<String> res = new ArrayList<String>();
-        lt.lock();
-        try{
-            for(String s : tarefas.keySet()){
-            if(!tarefas.get(res).getEstado())
-                res.add(s);           
+    public String executaTarefa(String id, String user) throws FerramentaException {
+        TipoTarefa tipo = this.tiposTarefa.get(id);
+        Map<String, Integer> pedidos = tipo.getPedidos();
+
+        for (String s : pedidos.keySet()) {
+            if (!this.ferramentas.containsKey(s)) {
+                throw new FerramentaException("ferramenta não existe");
             }
         }
-        finally{
-         lt.unlock(); 
-         return res;
-        }
-        
-        
-    }
-
-    @Override
-    public void notifications(String userID){
-        for(String s : this.tarefas.keySet()){
-            if(this.tarefas.get(s).getUtilizador().equals(userID)){
-                while(!this.tarefas.get(s).getEstado())
-                    try {
-                        this.tarefas.get(s).c.await();
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(Armazem.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-            }  
-        }
-    }
-
-    @Override
-    public void abastece(String ferramenta, int quant) {
-        if(this.ferramentas.containsKey(ferramenta))
-            this.ferramentas.get(ferramenta).abastece(quant);
-        else{
-            Ferramenta f = new Ferramenta(ferramenta,quant);
-            this.ferramentas.put(ferramenta,f);
-        }        
-    }
-    
-
-    @Override
-    public void addTarefa(Tarefa t) {
-        lt.lock();
-        try{
-            this.tarefas.put(t.getID(), t);
-        }
-        finally{
-            lt.unlock();
-        }        
-    }
-
-    public void executaTarefa(String id) throws FerramentaException{
-        Map<String, Integer> pedidos = this.tarefas.get(id).getPedidos();
-        
-        for(String s : pedidos.keySet()){
-            if(!this.ferramentas.containsKey(s))
-                throw new FerramentaException("ferramenta não existe");
-        }   
-        for(String aux : pedidos.keySet()){
+        for (String aux : pedidos.keySet()) {
             try {
                 this.ferramentas.get(aux).reserva(pedidos.get(aux));
             } catch (InterruptedException ex) {
-                Logger.getLogger(Armazem.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        String cod = this.idGen.toString();
+        this.idGen++;
+        tipo.addTarefa(new Tarefa(cod,user));
+        return cod;        
+    }
+
+    public void terminaTarefa(String id, String user) throws TarefaException {
+        TipoTarefa tipo = null;
+        Iterator it;
+        
+        this.lockTipos.lock();
+        try {
+            it = this.tiposTarefa.values().iterator();
+        } finally {
+            this.lockTipos.unlock();
+        }
+        boolean flag = true;
+        
+        while (flag && it.hasNext()){
+            tipo = (TipoTarefa) it.next();
+            if(tipo.existeID(id))
+                flag = false;                
+        }                   
+        
+        if(flag)
+            throw new TarefaException("a tarefa não existe!");
+        Tarefa t = tipo.getTarefa(id);
+        if(!t.getUtilizador().equals(user))
+            throw new TarefaException("a tarefa pertence a outro utilizador!");    
+        
+        Map<String, Integer> pedidos = tipo.getPedidos();
+        for (String aux : pedidos.keySet()) {
+            lockFerr.lock();
+            this.ferramentas.get(aux).reabastece(pedidos.get(aux));
+            lockFerr.unlock();
+        }
+        t.termina();
     }
     
-    public void terminaTarefa(String id){
-        Map<String, Integer> pedidos = this.tarefas.get(id).getPedidos();
-        
-        for(String aux : pedidos.keySet()){
-            this.ferramentas.get(aux).reabastece(pedidos.get(aux));
+    public TipoTarefa getTipoTarefa(String tarefa) {
+        lockFerr.lock();
+        try {
+            return this.tiposTarefa.get(tarefa);
+        } finally {
+            lockFerr.unlock();
         }
     }
 
-    @Override
-    public Tarefa getTarefa(String tarefa) {
-        lt.lock();
-        try{
-            return this.tarefas.get(tarefa);
-        }
-        finally{
-            lt.unlock();
-        }
-    }
-
-    public String toString(){
+    public String toString() {
         StringBuilder res = new StringBuilder();
-        
+
         res.append("+++++++     Armazem     +++++++\n");
         res.append("******     Ferrmntas     ******\n");
-        for(Ferramenta f : this.ferramentas.values())
+        for (Ferramenta f : this.ferramentas.values()) {
             res.append(f.toString());
+        }
         res.append("******     Tarefas     ******\n");
-        for(Tarefa t : this.tarefas.values())
+        for (TipoTarefa t : this.tiposTarefa.values()) {
             res.append(t.toString());
+        }
         res.append("++++++++++++++++++++++++++++++++\n");
         return res.toString();
     }
-    
-    
-    
+
 }
