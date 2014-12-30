@@ -20,6 +20,7 @@ public class ThreadTrataTerminal extends Thread {
     private Armazem armazem;
     private HashMap <String,Utilizador> utilizadores;
     private String pedido;
+    private boolean ok = true;
     
     public ThreadTrataTerminal(Armazem a,HashMap <String,Utilizador> users,String pedido){
         this.armazem = a;
@@ -46,13 +47,18 @@ public class ThreadTrataTerminal extends Thread {
     @Override
     public void run(){
         String resposta=null;
-        System.out.println("o pedido ** " +pedido+ " ** foi recebido e tratado");
-        String lista[] = pedido.split(" ");
+        String lista[] = pedido.split(":");
         
         switch (lista[0]){
             case "abastece": 
-                this.armazem.abastece(lista[1], Integer.parseInt(lista[2]));
-                resposta = "abastecido!";
+                try{
+                    this.armazem.abastece(lista[1], Integer.parseInt(lista[2]));
+                    resposta = "abastecido!";
+                }
+                catch(Exception e){
+                    resposta = "comando errado";
+                    ok = false;
+                }
                 break;
             
             case "executa": 
@@ -76,6 +82,7 @@ public class ThreadTrataTerminal extends Thread {
                 List<String> ids = new ArrayList<String>();
                 for(int i=1; i<lista.length; i++)
                     ids.add(lista[i]);
+            
                     
         {
             try {
@@ -106,11 +113,12 @@ public class ThreadTrataTerminal extends Thread {
                 resposta = this.armazem.toString();
                 break;        
             
-            default:
-                break;                
+            default: resposta = "comando errado";
+                     ok = false;
+                     break;               
         }
-                     
-        //envia resposta ao Cliente
+        if(ok)          
+            System.out.println("o pedido ** " +pedido+ " ** foi recebido e tratado");
         System.out.println(resposta);
         System.out.flush();
     }

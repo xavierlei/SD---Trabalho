@@ -47,7 +47,7 @@ public class Thread_TrataPedido implements Runnable {
     public void run(){
         String resposta=null;
         System.out.println("o pedido ** " +pedido+ " ** foi recebido e tratado");
-        String lista[] = pedido.split(" ");
+        String lista[] = pedido.split(":");
         
         switch (lista[0]){
             case "abastece": 
@@ -58,6 +58,8 @@ public class Thread_TrataPedido implements Runnable {
             case "executa": 
         {
             try {
+                System.out.println("lista 0: "+ lista[0]);
+                System.out.println("lista 1: "+ lista[1]);
                 resposta = this.armazem.executaTarefa(lista[1],userID);
             } catch (FerramentaException ex) {
                 Logger.getLogger(Thread_TrataPedido.class.getName()).log(Level.SEVERE, null, ex);

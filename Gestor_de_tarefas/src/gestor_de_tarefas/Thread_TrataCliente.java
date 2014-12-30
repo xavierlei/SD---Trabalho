@@ -42,7 +42,7 @@ public class Thread_TrataCliente implements Runnable {
             boolean continua = true;
             //Login -> tornar mais legivel?
             while( continua && ((l = in.readLine()) != null)){
-                String parse[] =  l.split(" ");
+                String parse[] =  l.split(":");
                 if( parse[0].equals("login") && (parse.length >= 3) ){ 
                     if(users.containsKey(parse[1])){ //verifica se user existe
                         Utilizador u = users.get(parse[1]);
