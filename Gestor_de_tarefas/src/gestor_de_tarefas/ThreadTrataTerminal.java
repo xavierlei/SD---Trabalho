@@ -55,9 +55,12 @@ public class ThreadTrataTerminal extends Thread {
                     this.armazem.abastece(lista[1], Integer.parseInt(lista[2]));
                     resposta = "abastecido!";
                 }
-                catch(Exception e){
-                    resposta = "comando errado";
+                catch(IndexOutOfBoundsException e){
+                    resposta = "comando errado: faltam argumentos";
                     ok = false;
+                }
+                catch(NumberFormatException e){
+                    resposta = "comando errado: argumento não numerico";
                 }
                 break;
             
@@ -73,9 +76,20 @@ public class ThreadTrataTerminal extends Thread {
                 break;
             
             case "adiciona": 
-                TipoTarefa t = constroiTarefa(lista);
-                this.armazem.addTarefa(t);
-                resposta = "controi a tarefa " + lista[1];
+                try{
+                    TipoTarefa t = constroiTarefa(lista);
+                    this.armazem.addTarefa(t);
+                    resposta = "controi a tarefa " + lista[1];
+                }
+                catch(IndexOutOfBoundsException e){
+                    System.out.println(e.toString());
+                    resposta = "comando errado: faltam argumentos";
+                    ok = false;
+                }
+                catch(NumberFormatException e){
+                    System.out.println(e.toString());
+                    resposta = "comando errado: argumento não numerico";
+                }
                 break;
             
             case "notifica": 

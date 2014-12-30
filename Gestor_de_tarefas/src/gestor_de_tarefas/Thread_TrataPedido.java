@@ -51,15 +51,21 @@ public class Thread_TrataPedido implements Runnable {
         
         switch (lista[0]){
             case "abastece": 
-                this.armazem.abastece(lista[1], Integer.parseInt(lista[2]));
-                resposta = "abastecido!";
+                try{
+                    this.armazem.abastece(lista[1], Integer.parseInt(lista[2]));
+                    resposta = "abastecido!";
+                }
+                catch(IndexOutOfBoundsException e){
+                    resposta = "comando errado: faltam argumentos";
+                }
+                catch(NumberFormatException e){
+                    resposta = "comando errado: argumento não numerico";
+                }
                 break;
             
             case "executa": 
         {
             try {
-                System.out.println("lista 0: "+ lista[0]);
-                System.out.println("lista 1: "+ lista[1]);
                 resposta = this.armazem.executaTarefa(lista[1],userID);
             } catch (FerramentaException ex) {
                 Logger.getLogger(Thread_TrataPedido.class.getName()).log(Level.SEVERE, null, ex);
@@ -69,9 +75,19 @@ public class Thread_TrataPedido implements Runnable {
                 break;
             
             case "adiciona": 
-                TipoTarefa t = constroiTarefa(lista);
-                this.armazem.addTarefa(t);
-                resposta = "controi a tarefa " + lista[1];
+                try{
+                    TipoTarefa t = constroiTarefa(lista);
+                    this.armazem.addTarefa(t);
+                    resposta = "controi a tarefa " + lista[1];
+                }
+                catch(IndexOutOfBoundsException e){
+                    System.out.println(e.toString());
+                    resposta = "comando errado: faltam argumentos";
+                }
+                catch(NumberFormatException e){
+                    System.out.println(e.toString());
+                    resposta = "comando errado: argumento não numerico";
+                }
                 break;
             
             case "notifica": 
