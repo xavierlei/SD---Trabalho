@@ -57,7 +57,7 @@ public class Thread_TrataCliente implements Runnable {
                             } else { out.println("Password Errada!!"); out.flush();}
                         } else { out.println("Utilizador já de encontra autenticado!"); out.flush();}
                     }else { out.println("Utilizador não existe!"); out.flush();} 
-                } else { out.println("Go fuck your self! learn to write!"); out.flush();}
+                } else { out.println("Comando errado!"); out.flush();}
             }
             
             //teste -> APAGAR ISTO

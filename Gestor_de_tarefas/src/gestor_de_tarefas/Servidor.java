@@ -36,7 +36,8 @@ public class Servidor {
         
         /*Cria aqui uma thread para a consola do proprio servidor com o armazem em referencia*/
         //apenas se liga um utilizador (...)
-             
+        ThreadTerminal terminal = new ThreadTerminal(armazem, users,exit); 
+        terminal.start();
         //cria conexão com Clientes
         while(!exit){            
             Socket s = ss.accept(); 
