@@ -16,12 +16,6 @@ import java.net.Socket;
  * @author carlosmorais
  */
 public class Cliente {
-    /*COMANDOS
-    abastece nome,qtd
-    adiciona nomeTarefa; nome1,qtd1; nome2,qtd2
-    executa nomeTarefa
-    notifica id1; id2    
-    */
     public static void main(String[] args) throws IOException, InterruptedException {      
         try ( 
             Socket s = new Socket("localhost", 44555)) {
@@ -34,7 +28,6 @@ public class Cliente {
             Thread cr = new Thread( new Thread_ClienteRead(serverInput));
             cr.start();
             //le as mensagens do Utilizador e envia para o Servidor
-            //fara sentido tratar os pedidos aqui, de forma a irem limpos para o servidor
             while( !(pedido=userInput.readLine()).equals("logout") ){
                 output.println(pedido);
                 output.flush();

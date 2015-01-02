@@ -6,6 +6,7 @@
 package gestor_de_tarefas;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -82,8 +83,11 @@ public class ThreadTerminal extends Thread{
                 this.exit = true;
             }
             else{
-                ThreadTrataTerminal t = new ThreadTrataTerminal(this.armazem,this.users,pedido);
-                t.start();
+                //ThreadTrataTerminal t = new ThreadTrataTerminal(this.armazem,this.users,pedido);
+                PrintWriter out = new PrintWriter(System.out);
+                
+                Thread cr = new Thread( new Thread_TrataPedido(this.armazem, this.user.getUsername(), out, pedido));
+                cr.start(); 
             }
         }
         

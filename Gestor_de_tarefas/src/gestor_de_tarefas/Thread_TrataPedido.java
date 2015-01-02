@@ -5,6 +5,7 @@
  */
 package gestor_de_tarefas;
 
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,8 +29,15 @@ public class Thread_TrataPedido implements Runnable {
         this.armazem = armazem;
         this.out = out;
         this.pedido = pedido;
-        this.userID = userID;
+        this.userID = userID;        
     }
+       /*) 
+    public Thread_TrataPedido(Armazem armazem, String userID, System out, String pedido) {
+        this.armazem = armazem;
+        this.out = (PrintWriter;
+        this.pedido = pedido;
+        this.userID = userID;
+    }*/
     
     public TipoTarefa constroiTarefa(String lista[]) {
         
@@ -82,8 +90,7 @@ public class Thread_TrataPedido implements Runnable {
             } catch (FerramentaException | TarefaException ex) {
                 resposta = ex.getMessage();
             }
-        }
-                //resposta=  "executa a tarefa "+lista[1]+" como o id "+resposta;                
+        }                
                 break;
             
             case "adiciona": 

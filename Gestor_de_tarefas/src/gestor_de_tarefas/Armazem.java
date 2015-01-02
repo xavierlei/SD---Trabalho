@@ -143,6 +143,8 @@ public class Armazem  {
         Tarefa t = tipo.getTarefa(id);
         if(!t.getUtilizador().equals(user))
             throw new TarefaException("a tarefa pertence a outro utilizador!");    
+        if(t.isTerminado())
+            throw new TarefaException("a tarefa já foi terminada!");
         
         Map<String, Integer> pedidos = tipo.getPedidos();
         for (String aux : pedidos.keySet()) {
@@ -166,7 +168,7 @@ public class Armazem  {
         StringBuilder res = new StringBuilder();
 
         res.append("+++++++     Armazem     +++++++\n");
-        res.append("******     Ferrmntas     ******\n");
+        res.append("******     Ferramentas     ******\n");
         for (Ferramenta f : this.ferramentas.values()) {
             res.append(f.toString());
         }
