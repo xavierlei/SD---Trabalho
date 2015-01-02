@@ -55,7 +55,11 @@ public class Thread_TrataPedido implements Runnable {
             lista[ie] = comeEspaco(s);
             ie++;
         }
-
+        System.out.print("PEDIDO=");
+        for(String s : lista){
+            System.out.print(s+":");
+        }
+        System.out.println(";");
         switch (lista[0]){
             case "abastece": 
                 try{
@@ -74,11 +78,12 @@ public class Thread_TrataPedido implements Runnable {
         {
             try {
                 resposta = this.armazem.executaTarefa(lista[1],userID);
-            } catch (FerramentaException ex) {
-                Logger.getLogger(Thread_TrataPedido.class.getName()).log(Level.SEVERE, null, ex);
+                resposta=  "executa a tarefa "+lista[1]+" como o id "+resposta;
+            } catch (FerramentaException | TarefaException ex) {
+                resposta = ex.getMessage();
             }
         }
-                resposta=  "executa a tarefa "+lista[1]+" como o id "+resposta;                
+                //resposta=  "executa a tarefa "+lista[1]+" como o id "+resposta;                
                 break;
             
             case "adiciona": 
@@ -94,6 +99,9 @@ public class Thread_TrataPedido implements Runnable {
                 catch(NumberFormatException e){
                     System.out.println(e.toString());
                     resposta = "comando errado: argumento não numerico";
+                }
+                catch(TarefaException ex){
+                    resposta = ex.getMessage();
                 }
                 break;
             
@@ -135,6 +143,7 @@ public class Thread_TrataPedido implements Runnable {
                 break;        
             
             default:
+                resposta = "comando errado!";
                 break;                
         }
                      

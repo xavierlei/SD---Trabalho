@@ -86,22 +86,26 @@ public class Armazem  {
         }
     }
     
-    public void addTarefa(TipoTarefa t) {
+    public void addTarefa(TipoTarefa t) throws TarefaException {
         lockFerr.lock();
         try {
+            if(this.tiposTarefa.containsKey(t.getID()))
+                throw new TarefaException("a tarefa que pretende adicionar ja existe");
             this.tiposTarefa.put(t.getID(), t);
         } finally {
             lockFerr.unlock();
         }
     }
 
-    public String executaTarefa(String id, String user) throws FerramentaException {
+    public String executaTarefa(String id, String user) throws FerramentaException, TarefaException {
+        if(!this.tiposTarefa.containsKey(id))
+            throw new TarefaException("a terefa "+id+" não existe");
         TipoTarefa tipo = this.tiposTarefa.get(id);
         Map<String, Integer> pedidos = tipo.getPedidos();
 
         for (String s : pedidos.keySet()) {
             if (!this.ferramentas.containsKey(s)) {
-                throw new FerramentaException("ferramenta não existe");
+                throw new FerramentaException("ferramenta "+s+" não existe");
             }
         }
         for (String aux : pedidos.keySet()) {
