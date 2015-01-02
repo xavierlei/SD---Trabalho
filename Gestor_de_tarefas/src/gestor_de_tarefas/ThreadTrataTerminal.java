@@ -48,6 +48,11 @@ public class ThreadTrataTerminal extends Thread {
     public void run(){
         String resposta=null;
         String lista[] = pedido.split(":");
+        int ie = 0;
+        for(String s : lista){
+            lista[ie] = comeEspaco(s);
+            ie++;
+        }
         
         switch (lista[0]){
             case "abastece": 
@@ -135,6 +140,50 @@ public class ThreadTrataTerminal extends Thread {
             System.out.println("o pedido ** " +pedido+ " ** foi recebido e tratado");
         System.out.println(resposta);
         System.out.flush();
+    }
+    
+    
+    public String comeEspaco(String s){
+        int tam = s.length();
+        char [] st = s.toCharArray();
+        char res [] = new char[tam+1];
+        String resposta = "";
+        int i,j;
+        i=0;
+        j=0;
+        while(j < tam && st[j]!=' '){
+            res[i] = st[j];
+            i++;
+            j++;
+        }
+        
+        for(; j < tam; j++){
+                if(i > 0){
+                        if(res[i-1] == ' ' && st[j] == ' ');
+                    else if(j == tam-1 && st[j] == ' ');
+                    else{
+                        res[i] = st[j];
+                        i++;
+                    }
+                }
+                else{
+                    if(st[j]!=' '){
+                        res[i] = st[j];
+                        i++;
+                    }
+                }
+        }
+        
+        if(res[i-1]==' ')
+            i-=1;
+        //else
+            //res[i] ='\0';
+        
+        tam = i;
+        for(i = 0; i < tam; i++)
+            resposta = resposta +res[i];
+        return resposta;
+        //return Arrays.toString(res);
     }
     
 }
