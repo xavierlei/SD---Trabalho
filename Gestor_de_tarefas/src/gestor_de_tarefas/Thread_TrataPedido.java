@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,9 +30,9 @@ public class Thread_TrataPedido implements Runnable {
         this.userID = userID;
     }
     
-    public TipoTarefa constroiTarefa(String lista[]){
+    public TipoTarefa constroiTarefa(String lista[]) {
         
-        HashMap<String,Integer> pedidos = new HashMap<>();
+        TreeMap<String,Integer> pedidos = new TreeMap<>();
         String id = lista[1];
         
         for(int i=2; i<lista.length; ){
@@ -102,7 +103,10 @@ public class Thread_TrataPedido implements Runnable {
                 Logger.getLogger(Thread_TrataPedido.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-                resposta = "notifica ";
+                resposta = "as tarefas ";
+                for(String aux : ids)
+                    resposta = resposta +aux+", ";
+                resposta += "foram terminadas.";
                 break;  
                     
             case "listagem":
