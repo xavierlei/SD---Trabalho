@@ -40,7 +40,6 @@ public class Thread_TrataCliente implements Runnable {
             String pedido;
             String l;
             boolean continua = true;
-            //Login -> tornar mais legivel?
             while( continua && ((l = in.readLine()) != null)){
                 String parse[] =  l.split(":");
                 if( parse[0].equals("login") && (parse.length >= 3) ){ 

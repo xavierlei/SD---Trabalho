@@ -12,14 +12,10 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author xavier
  */
 public class Utilizador {
-
     private String username;
     private String password;
     public ReentrantLock l;
-    private boolean loged;
-    
-    /*se os utilizadores guardassem os IN/OUT seria fantastico, pois as mensagens 
-    mantinham-se apos um logout.*/
+    private boolean loged;    
 
     public Utilizador(String username, String pwd) {
         this.username = username;

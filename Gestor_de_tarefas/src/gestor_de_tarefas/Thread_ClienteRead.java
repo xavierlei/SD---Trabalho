@@ -7,8 +7,6 @@ package gestor_de_tarefas;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -27,12 +25,11 @@ public class Thread_ClienteRead implements Runnable{
         try {
             //recebe mensagens do servidor e imprime
             String line;
-            /*há um pequeno bug aqui, por vezes quando é feito logout, isto ainda 
-                    é executado*/
             while((line = inputServer.readLine()) != null ){
                 System.out.println(line);
             }
-        } catch (IOException ex) {            
+        } catch (IOException ex) {   
+            System.out.println(ex.getMessage());
         }
     }               
 }

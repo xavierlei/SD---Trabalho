@@ -5,7 +5,6 @@
  */
 package gestor_de_tarefas;
 
-import java.util.Map;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -60,10 +59,14 @@ public class Tarefa {
         }
     }
 
+    public String getIdUser(){
+        return "=> Tarefa id = " + id + ", utilizador = " + utilizador +";\n";
+    }
+    
 
     @Override
     public String toString() {
-        return "=> Tarefa id = " + id + ", utilizador = " + utilizador + ";\n";
+        return "=> Tarefa id = " + id + ", utilizador = " + utilizador + ", terminado = " + terminado +";\n";
     }        
     
 }

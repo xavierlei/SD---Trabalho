@@ -5,13 +5,10 @@
  */
 package gestor_de_tarefas;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.util.HashMap;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -38,7 +35,6 @@ public class ThreadTerminal extends Thread{
         String l = "";
         System.out.println("###EFECTUE LOGIN PARA USAR O TERMINAL###");
         System.out.print(">");
-            //Login -> tornar mais legivel?
             while( continua && (!"sair".equals(l = in.nextLine()))){
                 String parse[] =  l.split(":");
                 if( parse[0].equals("login") && (parse.length >= 3) ){ 
@@ -65,32 +61,33 @@ public class ThreadTerminal extends Thread{
     
     @Override
     public void run(){
-        boolean continua = true;
         Scanner in = new Scanner(System.in);
-        if(!login())
-        this.exit = true;
+        if(login()) {
+        } else {
+            this.exit = true;
+        }
         String pedido;
         while(!exit){
             System.out.print(">");
             pedido = in.nextLine();
-            if(pedido.equals("sair")){
-                exit = true;
-                user.logout();
+            switch (pedido) {
+                case "sair":
+                    exit = true;
+                    user.logout();
+                    break;
+                case "logout":
+                    this.user.logout();
+                    if(!login())
+                        this.exit = true;
+                    break;
+                default:
+                    //System.out da consola vai ser ou out da Thread TrataPedido
+                    PrintWriter out = new PrintWriter(System.out);
+                    Thread cr = new Thread( new Thread_TrataPedido(this.armazem, this.user.getUsername(), out, pedido)); 
+                    cr.start();
+                    break;
             }
-            else if(pedido.equals("logout")){
-                this.user.logout();
-                if(!login())
-                this.exit = true;
-            }
-            else{
-                //ThreadTrataTerminal t = new ThreadTrataTerminal(this.armazem,this.users,pedido);
-                PrintWriter out = new PrintWriter(System.out);
-                
-                Thread cr = new Thread( new Thread_TrataPedido(this.armazem, this.user.getUsername(), out, pedido));
-                cr.start(); 
-            }
-        }
-        
+        }        
         System.exit(MIN_PRIORITY);
     }
     

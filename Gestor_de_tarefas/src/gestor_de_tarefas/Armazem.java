@@ -10,42 +10,56 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author xavier
  */
-public class Armazem  {
+public class Armazem {
 
     private Map<String, Ferramenta> ferramentas;
     private Map<String, TipoTarefa> tiposTarefa;
     private ReentrantLock lockFerr;
     private ReentrantLock lockTipos;
-    private Integer idGen=1000;
+    private Integer idGen = 1000;
 
     public Armazem() {
         this.ferramentas = new HashMap<>();
         this.tiposTarefa = new HashMap<>();
-        
+
         this.lockFerr = new ReentrantLock();
         this.lockTipos = new ReentrantLock();
     }
-    
-    
-    public String listagemTarefas(){        
+
+    public String listagemTarefas() {
         StringBuilder res = new StringBuilder();
-      
+
         for (TipoTarefa t : this.tiposTarefa.values()) {
             res.append(t.lista());
             res.append("\n");
         }
         return res.toString();
-    }   
- 
+    }
+
+    public boolean existeTarefaId(String id) {
+        TipoTarefa tipo;
+        Iterator it;
+        lockTipos.lock();
+        try {
+            it = this.tiposTarefa.values().iterator();
+        } finally {
+            lockTipos.unlock();
+        }
+        while (it.hasNext()) {
+            tipo = (TipoTarefa) it.next();
+            if (tipo.existeID(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
     
-    public Tarefa getTarefa(String id){
+    public Tarefa getTarefa(String id) {
         TipoTarefa tipo;
         Iterator it;
         lockTipos.lock();
@@ -55,23 +69,29 @@ public class Armazem  {
             lockTipos.unlock();
         }
         boolean flag = true;
-        
-        while (flag && it.hasNext()){
+
+        while (flag && it.hasNext()) {
             tipo = (TipoTarefa) it.next();
-            if(tipo.existeID(id))
+            if (tipo.existeID(id)) {
                 return tipo.getTarefa(id);
-        }                   
+            }
+        }
         return null;
     }
-    
-    public void notifica(List<String> ids) throws InterruptedException{
+
+    public void notifica(List<String> ids) throws InterruptedException, TarefaException {
         Tarefa t;
-        for(String id: ids){
-           t = this.getTarefa(id);
-           t.espera();
+        
+        for (String id : ids) {
+            if(!this.existeTarefaId(id))
+                throw new TarefaException("nao existe a tarefa com o id "+id);
+        }
+        for (String id : ids) {
+            t = this.getTarefa(id);             
+            t.espera();           
         }
     }
-    
+
     public void abastece(String ferramenta, int quant) {
         lockFerr.lock();
         try {
@@ -85,12 +105,13 @@ public class Armazem  {
             lockFerr.unlock();
         }
     }
-    
+
     public void addTarefa(TipoTarefa t) throws TarefaException {
         lockFerr.lock();
         try {
-            if(this.tiposTarefa.containsKey(t.getID()))
+            if (this.tiposTarefa.containsKey(t.getID())) {
                 throw new TarefaException("a tarefa que pretende adicionar ja existe");
+            }
             this.tiposTarefa.put(t.getID(), t);
         } finally {
             lockFerr.unlock();
@@ -98,14 +119,15 @@ public class Armazem  {
     }
 
     public String executaTarefa(String id, String user) throws FerramentaException, TarefaException {
-        if(!this.tiposTarefa.containsKey(id))
-            throw new TarefaException("a terefa "+id+" não existe");
+        if (!this.tiposTarefa.containsKey(id)) {
+            throw new TarefaException("a terefa " + id + " não existe");
+        }
         TipoTarefa tipo = this.tiposTarefa.get(id);
         Map<String, Integer> pedidos = tipo.getPedidos();
 
         for (String s : pedidos.keySet()) {
             if (!this.ferramentas.containsKey(s)) {
-                throw new FerramentaException("ferramenta "+s+" não existe");
+                throw new FerramentaException("ferramenta " + s + " não existe");
             }
         }
         for (String aux : pedidos.keySet()) {
@@ -116,14 +138,14 @@ public class Armazem  {
         }
         String cod = this.idGen.toString();
         this.idGen++;
-        tipo.addTarefa(new Tarefa(cod,user));
-        return cod;        
+        tipo.addTarefa(new Tarefa(cod, user));
+        return cod;
     }
 
     public void terminaTarefa(String id, String user) throws TarefaException {
         TipoTarefa tipo = null;
         Iterator it;
-        
+
         this.lockTipos.lock();
         try {
             it = this.tiposTarefa.values().iterator();
@@ -131,30 +153,37 @@ public class Armazem  {
             this.lockTipos.unlock();
         }
         boolean flag = true;
-        
-        while (flag && it.hasNext()){
+
+        while (flag && it.hasNext()) {
             tipo = (TipoTarefa) it.next();
-            if(tipo.existeID(id))
-                flag = false;                
-        }                   
-        
-        if(flag)
+            if (tipo.existeID(id)) {
+                flag = false;
+            }
+        }
+
+        if (flag) {
             throw new TarefaException("a tarefa não existe!");
+        }
         Tarefa t = tipo.getTarefa(id);
-        if(!t.getUtilizador().equals(user))
-            throw new TarefaException("a tarefa pertence a outro utilizador!");    
-        if(t.isTerminado())
+        if (!t.getUtilizador().equals(user)) {
+            throw new TarefaException("a tarefa pertence a outro utilizador!");
+        }
+        if (t.isTerminado()) {
             throw new TarefaException("a tarefa já foi terminada!");
-        
+        }
+
         Map<String, Integer> pedidos = tipo.getPedidos();
         for (String aux : pedidos.keySet()) {
             lockFerr.lock();
-            this.ferramentas.get(aux).reabastece(pedidos.get(aux));
-            lockFerr.unlock();
+            try {
+                this.ferramentas.get(aux).reabastece(pedidos.get(aux));
+            } finally {
+                lockFerr.unlock();
+            }
         }
         t.termina();
     }
-    
+
     public TipoTarefa getTipoTarefa(String tarefa) {
         lockFerr.lock();
         try {

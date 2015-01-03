@@ -2,7 +2,6 @@ package gestor_de_tarefas;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /*
@@ -24,8 +23,7 @@ public class TipoTarefa {
     public TipoTarefa(String ID, Map<String, Integer> pedidos) {
         this.ID = ID;
         this.pedidos = pedidos;
-        this.tarefas = new HashMap<String, Tarefa>();
-        
+        this.tarefas = new HashMap<>();        
         this.lockTarefas = new ReentrantLock();
     }
 
@@ -54,13 +52,7 @@ public class TipoTarefa {
     
     public boolean existeID(String id){
         return this.tarefas.containsKey(id);
-    }
-    
-    /*
-    public Integer calcExecutaveis(){
-        return this.tarefas.size();
-    }
-    */
+    }    
     
     public String lista(){
         StringBuilder res = new StringBuilder();
@@ -69,22 +61,22 @@ public class TipoTarefa {
         for (String aux : this.pedidos.keySet()) {            
             res.append(aux + ", " + this.pedidos.get(aux) + "; ");
         }
-        res.append("Tarefas em curso:\n");
+        res.append("\nTarefas em curso:\n");
         for(Tarefa t: this.tarefas.values()){
             if(!t.isTerminado())       
-                res.append(t.toString());
+                res.append(t.getIdUser());
         }
         return res.toString();    
     }
 
     public String toString() {
         StringBuilder res = new StringBuilder();
-        res.append("Tipo de Tarefa: " + this.getID() + "\n");
+        res.append("\nTipo de Tarefa: " + this.getID() + "\n");
         res.append("Ferramentas: ");
         for (String aux : this.pedidos.keySet()) {
             res.append(aux + ", " + this.pedidos.get(aux) + "; ");
         }
-        res.append("Tarefas em curso:\n");
+        res.append("\nTarefas em curso:\n");
         for(Tarefa t: this.tarefas.values())
             res.append(t.toString());
         return res.toString();

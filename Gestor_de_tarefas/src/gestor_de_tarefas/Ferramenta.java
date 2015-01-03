@@ -65,11 +65,9 @@ public class Ferramenta {
         lock.lock();
         try {
             while(this.disponivel < qtd){
-                System.out.println("A disponibilidade de "+this.nome+" é "+this.disponivel+", vou esperar!");
+                /*System.out.println("A disponibilidade de "+this.nome+" é "+this.disponivel+", vou esperar!");*/
                 //adormece e fica a espera que disponibilidade aumente
                 maisDisponivel.await();
-                //System.out.println("Cansei de esperar!");
-                //maisDisponivel.awaitNanos(xxx);
             }
             this.disponivel -= qtd;
         } finally {
